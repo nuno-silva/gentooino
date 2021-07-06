@@ -22,6 +22,13 @@ DOCKER_BUILDKIT=1 docker build \
 	--progress plain \
 	--tag $repo:$tag .
 
+echo
 docker images $repo:$tag
 
+echo
 echo "Done after $((SECONDS/60)) min $((SECONDS%60)) sec"
+
+echo "To publish, run:"
+echo
+echo " docker push $repo:$tag"
+echo
