@@ -34,6 +34,8 @@ jobs:
     - name: Build image
       run: |
         export MAKEOPTS="-j$(nproc)"
+        echo "Removing tmpfs from gcc compilation layer"
+        sed -i -e 's|--mount.*portage/||' Dockerfile
         bash build.sh ${{ github.event.inputs.args }}
 
     - name: Inspect image

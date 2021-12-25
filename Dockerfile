@@ -16,13 +16,17 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage \
 ARG GCC=~7.5.0
 
 # install avr-gcc with C++ support
-RUN --mount=type=tmpfs,target=/var/tmp/portage \
-	mkdir -p /etc/portage/repos.conf \
+# XXX: removing this mount in Github CI since it does not have enough RAM
+# and tmpfs-size opt does not work there
+RUN --mount=type=tmpfs,target=/var/tmp/portage/ \
+	df -h /var/tmp/portage \
+	&& mkdir -p /etc/portage/repos.conf \
 	&& echo "cross-avr/gcc cxx" >> /etc/portage/package.use/cross-avr-cxx \
 	&& crossdev --gcc $GCC --target avr --ov-output /usr/local/portage-crossdev \
 	&& emerge --changed-use -pv cross-avr/gcc \
 	&& emerge --changed-use -q cross-avr/gcc \
 	&& rm -vf /var/cache/distfiles/*.tar.* \
+	&& rm -vf /var/tmp/portage/* \
 	|| { echo Something failed, dumping logs; \
 	set -x; tail -n 500 /var/log/portage/cross-avr-*.log ; \
 	free -h; df -h; \
