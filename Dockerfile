@@ -4,6 +4,9 @@ FROM gentoo/stage3:$DATE
 
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
+ARG MAKEOPTS=-j1
+ENV MAKEOPTS=$MAKEOPTS
+
 # install git and crossdev
 RUN --mount=type=tmpfs,target=/var/tmp/portage \
 	echo "dev-vcs/git -perl -cgi -cvs -tk" >> /etc/portage/package.use/git \

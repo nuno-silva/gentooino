@@ -9,6 +9,10 @@ ARDUINO=${2:-1.8.3}
 DATE=$(date -u +%Y%m%d)
 DATE=${3:-$DATE}
 
+def_MAKEOPTS="-j$(nproc --ignore=2)"
+MAKEOPTS=${MAKEOPTS:-$def_MAKEOPTS}
+echo "using MAKEOPTS=$MAKEOPTS"
+
 tag="gcc-${GCC/[~]/}-arduino-${ARDUINO}"
 tag="$tag-$DATE"
 
@@ -19,6 +23,7 @@ DOCKER_BUILDKIT=1 docker build \
 	--build-arg GCC="${GCC}" \
 	--build-arg ARDUINO="${ARDUINO}" \
 	--build-arg DATE="${DATE}" \
+	--build-arg MAKEOPTS="${MAKEOPTS}" \
 	--progress plain \
 	--tag $repo:$tag .
 
