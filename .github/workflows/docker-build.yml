@@ -1,0 +1,50 @@
+name: Docker
+
+on:
+  schedule:
+    - cron: '59 12 1 * *'
+  push:
+    branches: [ master ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      args:
+        description: 'build arguments (GCC ARDUINO)'
+        required: false
+        default: ''
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: nuno351/gentooino
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build image
+      run: bash build.sh ${{ github.event.inputs.args }}
+
+    - name: Inspect image
+      run: docker image inspect "${IMAGE_NAME}"
+
+    - name: Login to Docker Registry
+      uses: docker/login-action@v1
+      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push image
+      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      env:
+        DOCKER_CLI_EXPERIMENTAL: enabled
+      run: docker push --all-tags
