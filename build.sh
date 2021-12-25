@@ -14,7 +14,7 @@ MAKEOPTS=${MAKEOPTS:-$def_MAKEOPTS}
 echo "using MAKEOPTS=$MAKEOPTS"
 
 tag="gcc-${GCC/[~]/}-arduino-${ARDUINO}"
-tag="$tag-$DATE"
+tag_date="$tag-$DATE"
 
 echo building tag $tag
 
@@ -25,15 +25,19 @@ DOCKER_BUILDKIT=1 docker build \
 	--build-arg DATE="${DATE}" \
 	--build-arg MAKEOPTS="${MAKEOPTS}" \
 	--progress plain \
-	--tag $repo:$tag .
+	--tag $repo:$tag_date .
 
 echo
-docker images $repo:$tag
+set -x
+docker images $repo:$tag_date
 
+docker tag $repo:$tag_date $repo:$tag
+docker tag $repo:$tag_date $repo
+set +x
 echo
 echo "Done after $((SECONDS/60)) min $((SECONDS%60)) sec"
 
 echo "To publish, run:"
 echo
-echo " docker push $repo:$tag"
+echo " docker push $repo:$tag_date"
 echo
