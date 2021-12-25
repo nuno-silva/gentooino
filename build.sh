@@ -2,9 +2,9 @@
 
 set -e
 
-repo=nuno351/gentooino
+repo=${IMAGE_NAME:-nuno351/gentooino}
 
-GCC=${1:-~7.5.0}
+GCC=${1:-~8.5.0}
 ARDUINO=${2:-1.8.3}
 DATE=`date +%+4Y%m%d`
 DATE=${3:-$DATE}
