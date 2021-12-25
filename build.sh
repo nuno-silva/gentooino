@@ -16,7 +16,7 @@ echo building tag $tag
 
 DOCKER_BUILDKIT=1 docker build \
 	--file Dockerfile \
-	--build-arg gcc="${GCC}" \
+	--build-arg GCC="${GCC}" \
 	--build-arg ARDUINO="${ARDUINO}" \
 	--build-arg DATE="${DATE}" \
 	--progress plain \
