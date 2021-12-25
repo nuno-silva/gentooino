@@ -22,7 +22,11 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage \
 	&& crossdev --gcc $GCC --target avr --ov-output /usr/local/portage-crossdev \
 	&& emerge --changed-use -pv cross-avr/gcc \
 	&& emerge --changed-use -q cross-avr/gcc \
-	&& rm -vf /var/cache/distfiles/*.tar.*
+	&& rm -vf /var/cache/distfiles/*.tar.* \
+	|| { echo Something failed, dumping logs; \
+	set -x; tail -n 500 /var/log/portage/cross-avr-*.log ; \
+	free -h; df -h; \
+	exit 2; }
 
 ARG ARDUINO=1.8.3
 ENV ARDUINO_TAR=ArduinoCore-avr-$ARDUINO.tar.xz
