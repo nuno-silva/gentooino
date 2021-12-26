@@ -1,12 +1,20 @@
 # Gentooino
 
-Gentoo-based image containing:
+[Gentoo](https://www.gentoo.org/)-based image containing:
 
 * the [Arduino Core for AVR](https://github.com/arduino/ArduinoCore-avr)
 * [avr-gcc](https://gcc.gnu.org/wiki/avr-gcc) compiled using [crossdev](https://wiki.gentoo.org/wiki/Crossdev)
 * git, make, etc
 
-Image is published as [nuno351/gentooino](https://hub.docker.com/repository/docker/nuno351/gentooino).
+Image is published as [nuno351/gentooino](https://hub.docker.com/r/nuno351/gentooino).
+
+## Why
+
+You can use this image to:
+
+- build Arduino sketches using you own Makefile(s) (see also [arduino-cli](https://github.com/arduino/arduino-cli))
+- compile code to run on [AVR microcontrollers](https://en.wikipedia.org/wiki/AVR_microcontrollers)
+- ...
 
 ## Building the image
 
