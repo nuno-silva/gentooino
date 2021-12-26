@@ -53,4 +53,4 @@ jobs:
       if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
       env:
         DOCKER_CLI_EXPERIMENTAL: enabled
-      run: docker push --all-tags
+      run: docker push --all-tags "${IMAGE_NAME}"
