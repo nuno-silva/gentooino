@@ -10,6 +10,8 @@ ARDUINO=${2:-1.8.4}
 DATE=$(date -u +%Y%m%d)
 DATE=${3:-$DATE}
 
+VERSION="$(git remote get-url origin && git describe --tags --always)" || VERSION=dev
+
 def_MAKEOPTS="-j$(nproc --ignore=2)"
 MAKEOPTS=${MAKEOPTS:-$def_MAKEOPTS}
 echo "using MAKEOPTS=$MAKEOPTS"
@@ -21,6 +23,7 @@ echo building tag $tag
 
 DOCKER_BUILDKIT=1 docker build \
 	--file Dockerfile \
+	--build-arg VERSION="${VERSION}" \
 	--build-arg GCC="${GCC}" \
 	--build-arg ARDUINO="${ARDUINO}" \
 	--build-arg DATE="${DATE}" \

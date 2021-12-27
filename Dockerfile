@@ -39,9 +39,16 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage/ \
 ARG ARDUINO=1.8.4
 ENV ARDUINO_TAR=$ARDUINO.tar.gz
 
+ARG VERSION=dev
+
 # install arduino core
 RUN curl https://github.com/arduino/ArduinoCore-avr/archive/refs/tags/$ARDUINO_TAR \
 	-o $ARDUINO_TAR -L \
+	&& echo "$VERSION" >> /version \
+	&& echo "gcc $GCC" >> /version \
+	&& echo "arduino $ARDUINO" >> /version \
+	&& echo "date $DATE" >> /version \
+	&& date -u >> /version \
 	&& tar -C / -xf $ARDUINO_TAR \
 	&& rm -v $ARDUINO_TAR \
 	&& mkdir -p /usr/share/arduino/hardware/arduino \
