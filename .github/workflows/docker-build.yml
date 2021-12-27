@@ -21,6 +21,8 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: nuno351/gentooino
+  # not using build.strategy so layers are re-used
+  GCC_VERSIONS: ~8.5.0 ~9.4.0 ~11.2.0
 
 jobs:
   build:
@@ -36,21 +38,29 @@ jobs:
         export MAKEOPTS="-j$(nproc)"
         echo "Removing tmpfs from gcc compilation layer"
         sed -i -e 's|--mount.*portage/||' Dockerfile
-        bash build.sh ${{ github.event.inputs.args }}
+        if [[ -z "${{ github.event.inputs.args }}" ]]; then
+          for gcc in $GCC_VERSIONS; do
+            echo "Building image for gcc $gcc..."
+            bash build.sh $gcc
+          done
+        else
+          echo Manual build ${{ github.event.inputs.args }}
+          bash build.sh ${{ github.event.inputs.args }}
+        fi
 
     - name: Inspect image
       run: docker image inspect "${IMAGE_NAME}"
 
     - name: Login to Docker Registry
       uses: docker/login-action@v1
-      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master'
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Push image
-      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master'
       env:
         DOCKER_CLI_EXPERIMENTAL: enabled
       run: docker push --all-tags "${IMAGE_NAME}"

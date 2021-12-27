@@ -5,7 +5,8 @@ set -e
 repo=${IMAGE_NAME:-nuno351/gentooino}
 
 GCC=${1:-~8.5.0}
-ARDUINO=${2:-1.8.3}
+GCC_latest_major=11
+ARDUINO=${2:-1.8.4}
 DATE=$(date -u +%Y%m%d)
 DATE=${3:-$DATE}
 
@@ -13,7 +14,7 @@ def_MAKEOPTS="-j$(nproc --ignore=2)"
 MAKEOPTS=${MAKEOPTS:-$def_MAKEOPTS}
 echo "using MAKEOPTS=$MAKEOPTS"
 
-tag="gcc-${GCC/[~]/}-arduino-${ARDUINO}"
+tag="gcc-${GCC//[*~]/}-arduino-${ARDUINO}"
 tag_date="$tag-$DATE"
 
 echo building tag $tag
@@ -32,8 +33,12 @@ set -x
 docker images $repo:$tag_date
 
 docker tag $repo:$tag_date $repo:$tag
-docker tag $repo:$tag_date $repo
 set +x
+if [[ $GCC = *"${GCC_latest_major}."* ]]; then
+	set -x
+	docker tag $repo:$tag_date $repo
+	set +x
+fi
 echo
 echo "Done after $((SECONDS/60)) min $((SECONDS%60)) sec"
 

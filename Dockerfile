@@ -10,6 +10,7 @@ ENV MAKEOPTS=$MAKEOPTS
 # install git and crossdev
 RUN --mount=type=tmpfs,target=/var/tmp/portage \
 	echo "dev-vcs/git -perl -cgi -cvs -tk" >> /etc/portage/package.use/git \
+	&& eselect news read > /dev/null \
 	&& emerge -q dev-vcs/git crossdev \
 	&& rm -vf /var/cache/distfiles/*.tar.*
 
@@ -19,7 +20,8 @@ ARG GCC=~7.5.0
 # XXX: removing this mount in Github CI since it does not have enough RAM
 # and tmpfs-size opt does not work there
 RUN --mount=type=tmpfs,target=/var/tmp/portage/ \
-	df -h /var/tmp/portage \
+	set -x \
+	&& df -h /var/tmp/portage \
 	&& mkdir -p /etc/portage/repos.conf \
 	&& echo "cross-avr/gcc cxx" >> /etc/portage/package.use/cross-avr-cxx \
 	&& crossdev --gcc $GCC --target avr --ov-output /usr/local/portage-crossdev \
@@ -27,17 +29,21 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage/ \
 	&& emerge --changed-use -q cross-avr/gcc \
 	&& rm -vf /var/cache/distfiles/*.tar.* \
 	&& rm -vf /var/tmp/portage/* \
+	&& rm -vf /var/log/portage/cross-avr-*.log \
+	&& rm -vfr /usr/share/*/avr/*/locale/* \
 	|| { echo Something failed, dumping logs; \
-	set -x; tail -n 500 /var/log/portage/cross-avr-*.log ; \
+	tail -n 300 /var/log/portage/cross-avr-*.log ; \
 	free -h; df -h; \
 	exit 2; }
 
-ARG ARDUINO=1.8.3
-ENV ARDUINO_TAR=ArduinoCore-avr-$ARDUINO.tar.xz
+ARG ARDUINO=1.8.4
+ENV ARDUINO_TAR=$ARDUINO.tar.gz
 
 # install arduino core
-RUN curl https://github.com/arduino/ArduinoCore-avr/releases/download/$ARDUINO/$ARDUINO_TAR -o $ARDUINO_TAR -L \
+RUN curl https://github.com/arduino/ArduinoCore-avr/archive/refs/tags/$ARDUINO_TAR \
+	-o $ARDUINO_TAR -L \
 	&& tar -C / -xf $ARDUINO_TAR \
 	&& rm -v $ARDUINO_TAR \
 	&& mkdir -p /usr/share/arduino/hardware/arduino \
-	&& ln -s /ArduinoCore-avr-* /usr/share/arduino/hardware/arduino/avr
+	&& ln -s /ArduinoCore-avr-* /usr/share/arduino/hardware/arduino/avr \
+	&& ls /usr/share/arduino/hardware/arduino/avr/{,cores,variants}

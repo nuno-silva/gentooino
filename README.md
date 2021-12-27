@@ -8,6 +8,8 @@
 
 Image is published as [nuno351/gentooino](https://hub.docker.com/r/nuno351/gentooino).
 
+![nuno351/gentooino](https://dockeri.co/image/nuno351/gentooino)
+
 ## Why
 
 You can use this image to:
