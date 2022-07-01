@@ -4,9 +4,9 @@ set -e
 
 repo=${IMAGE_NAME:-nuno351/gentooino}
 
-GCC=${1:-~8.5.0}
+GCC=${1:-~9.5.0}
 GCC_latest_major=11
-ARDUINO=${2:-1.8.4}
+ARDUINO=${2:-1.8.5}
 DATE=$(date -u +%Y%m%d)
 DATE=${3:-$DATE}
 
