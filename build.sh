@@ -26,7 +26,6 @@ DOCKER_BUILDKIT=1 docker build \
 	--build-arg VERSION="${VERSION}" \
 	--build-arg GCC="${GCC}" \
 	--build-arg ARDUINO="${ARDUINO}" \
-	--build-arg DATE="${DATE}" \
 	--build-arg MAKEOPTS="${MAKEOPTS}" \
 	--progress plain \
 	--tag $repo:$tag_date .
