@@ -14,7 +14,7 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage \
 	&& emerge -q dev-vcs/git crossdev \
 	&& rm -vf /var/cache/distfiles/*.tar.*
 
-ARG GCC=~7.5.0
+ARG GCC=~9.5.0
 
 # install avr-gcc with C++ support
 # XXX: removing this mount in Github CI since it does not have enough RAM
@@ -30,13 +30,13 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage/ \
 	&& rm -vf /var/cache/distfiles/*.tar.* \
 	&& rm -vf /var/tmp/portage/* \
 	&& rm -vf /var/log/portage/cross-avr-*.log \
-	&& rm -vfr /usr/share/*/avr/*/locale/* \
+	&& rm -fr /usr/share/*/avr/*/locale/* \
 	|| { echo Something failed, dumping logs; \
 	tail -n 300 /var/log/portage/cross-avr-*.log ; \
 	free -h; df -h; \
 	exit 2; }
 
-ARG ARDUINO=1.8.4
+ARG ARDUINO=1.8.6
 ENV ARDUINO_TAR=$ARDUINO.tar.gz
 
 ARG VERSION=dev
