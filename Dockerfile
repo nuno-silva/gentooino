@@ -1,6 +1,8 @@
 ARG DATE=latest
 FROM gentoo/portage:$DATE as portage
 FROM gentoo/stage3:$DATE
+# https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG DATE
 
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 

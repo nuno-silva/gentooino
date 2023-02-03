@@ -11,6 +11,7 @@ DATE=$(date -u +%Y%m%d)
 DATE=${3:-$DATE}
 
 VERSION="$(git remote get-url origin && git describe --tags --always)" || VERSION=dev
+REPO="https://github.com/nuno-silva/gentooino"
 
 def_MAKEOPTS="-j$(nproc --ignore=2)"
 MAKEOPTS=${MAKEOPTS:-$def_MAKEOPTS}
@@ -27,6 +28,9 @@ DOCKER_BUILDKIT=1 docker build \
 	--build-arg GCC="${GCC}" \
 	--build-arg ARDUINO="${ARDUINO}" \
 	--build-arg MAKEOPTS="${MAKEOPTS}" \
+	--label "org.opencontainers.image.source=${REPO}" \
+	--label "org.opencontainers.artifact.description=GCC=${GCC},ARDUINO=${ARDUINO},DATE=${DATE}" \
+	--label "org.opencontainers.image.version=$(echo "$VERSION" | tail -n1)" \
 	--progress plain \
 	--tag $repo:$tag_date .
 
