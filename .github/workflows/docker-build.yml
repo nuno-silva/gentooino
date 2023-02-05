@@ -51,7 +51,7 @@ jobs:
     - name: Inspect image
       run: |
         docker images
-        docker image inspect "${IMAGE_NAME}"
+        docker images | awk '/gentooino/{print $2}' | xargs -t -I{} docker image inspect "${IMAGE_NAME}:{}"
 
     - name: Login to Docker Registry
       uses: docker/login-action@v2
