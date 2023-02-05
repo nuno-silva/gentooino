@@ -16,7 +16,8 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage \
 	&& emerge -q dev-vcs/git crossdev \
 	&& rm -vf /var/cache/distfiles/*.tar.*
 
-ARG GCC=~9.5.0
+# gcc major version to install
+ARG GCC=9
 
 # install avr-gcc with C++ support
 # XXX: removing this mount in Github CI since it does not have enough RAM
@@ -26,7 +27,9 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage/ \
 	&& df -h /var/tmp/portage \
 	&& mkdir -p /etc/portage/repos.conf \
 	&& echo "cross-avr/gcc cxx" >> /etc/portage/package.use/cross-avr-cxx \
-	&& crossdev --gcc $GCC --target avr --ov-output /usr/local/portage-crossdev \
+	&& echo "<cross-avr/gcc-$GCC" >> /etc/portage/package.mask/cross-avr-gcc \
+	&& echo ">=cross-avr/gcc-$((GCC+1))" >> /etc/portage/package.mask/cross-avr-gcc \
+	&& crossdev --target avr --ov-output /usr/local/portage-crossdev -P -p \
 	&& emerge --changed-use -pv cross-avr/gcc \
 	&& emerge --changed-use -q cross-avr/gcc \
 	&& rm -vf /var/cache/distfiles/*.tar.* \

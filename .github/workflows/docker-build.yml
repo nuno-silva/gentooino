@@ -22,7 +22,7 @@ env:
   REGISTRY: docker.io
   IMAGE_NAME: nuno351/gentooino
   # not using build.strategy so layers are re-used
-  GCC_VERSIONS: ~9.5.0 ~10.4.0
+  GCC_VERSIONS: 9 10 11
 
 jobs:
   build:
