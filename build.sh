@@ -6,7 +6,7 @@ repo=${IMAGE_NAME:-nuno351/gentooino}
 
 GCC=${1:-9}
 GCC_latest_major=11
-ARDUINO=${2:-1.8.5}
+ARDUINO=${2:-1.8.6}
 DATE=$(date -u +%Y%m%d)
 DATE=${3:-$DATE}
 
@@ -39,8 +39,9 @@ set -x
 docker images $repo:$tag_date
 
 docker tag $repo:$tag_date $repo:$tag
+REGEX="^${GCC_latest_major}([^0-9]|\$)"
 set +x
-if [[ $GCC = *"${GCC_latest_major}."* ]]; then
+if [[ $GCC =~ $REGEX ]]; then
 	set -x
 	docker tag $repo:$tag_date $repo
 	set +x
