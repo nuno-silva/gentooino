@@ -29,7 +29,7 @@ RUN --mount=type=tmpfs,target=/var/tmp/portage/ \
 	&& echo "cross-avr/gcc cxx" >> /etc/portage/package.use/cross-avr-cxx \
 	&& echo "<cross-avr/gcc-$GCC" >> /etc/portage/package.mask/cross-avr-gcc \
 	&& echo ">=cross-avr/gcc-$((GCC+1))" >> /etc/portage/package.mask/cross-avr-gcc \
-	&& crossdev --target avr --ov-output /usr/local/portage-crossdev -P -p \
+	&& crossdev --target avr --ov-output /usr/local/portage-crossdev \
 	&& emerge --changed-use -pv cross-avr/gcc \
 	&& emerge --changed-use -q cross-avr/gcc \
 	&& rm -vf /var/cache/distfiles/*.tar.* \
@@ -59,3 +59,11 @@ RUN curl https://github.com/arduino/ArduinoCore-avr/archive/refs/tags/$ARDUINO_T
 	&& mkdir -p /usr/share/arduino/hardware/arduino \
 	&& ln -s /ArduinoCore-avr-* /usr/share/arduino/hardware/arduino/avr \
 	&& ls /usr/share/arduino/hardware/arduino/avr/{,cores,variants}
+
+# check that everything is installed
+RUN git --version \
+	&& sha1sum /usr/avr/include/stdlib.h \
+	&& qlist -Iv cross-avr \
+	&& avr-gcc --version \
+	&& ls /usr/share/arduino/hardware/arduino/avr/{,cores,variants} \
+	&& tail -n+1 /version
